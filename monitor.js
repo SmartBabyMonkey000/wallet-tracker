@@ -79,7 +79,7 @@ async function monitorWallet() {
             const filter = { programId: TOKEN_PROGRAM_ID };
             const tokenAccounts = await connection.getTokenAccountsByOwner(walletPublicKey, filter);
         
-            console.log(`Token Accounts for wallet ${walletAddr}:`, tokenAccounts.value.length);
+            //console.log(`Token Accounts for wallet ${walletAddr}:`, tokenAccounts.value.length);
         
             walletTokenLists[walletAddr].curTokenList = [];
         
@@ -88,7 +88,7 @@ async function monitorWallet() {
                 const tokenPublicKey = new PublicKey(accountData.mint);
                 const tokenBalance = await connection.getTokenAccountBalance(tokenAccount.pubkey);
         
-                console.log(`Token: ${tokenPublicKey.toBase58()}, Balance: ${tokenBalance.value.uiAmount}`);
+                //console.log(`Token: ${tokenPublicKey.toBase58()}, Balance: ${tokenBalance.value.uiAmount}`);
         
                 walletTokenLists[walletAddr].curTokenList.push(tokenPublicKey.toString());
             }
