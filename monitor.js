@@ -37,7 +37,6 @@ function arrayDifference(arr1, arr2) {
     return arr1.filter(element => !arr2.includes(element));
 }
 
-
 async function getTokenMetaData(connection, tokenMint) {
     const metaplex = Metaplex.make(connection);
     const metadataAccount = metaplex
@@ -56,6 +55,10 @@ async function getTokenMetaData(connection, tokenMint) {
         return null
 }
 
+function getRandomConnection(conList) {
+    return conList[Math.floor(Math.random() * conList.length)];
+}
+
 async function monitorWallet() {
     // Set up connection
     const connection = new Connection(RPC_URL, {
@@ -67,14 +70,26 @@ async function monitorWallet() {
             return wallet;
     });
 
+    const rpcURLList = process.env.RPC_URLS;
+    const rpcURLs = rpcURLList.split('\n').filter((rpcUrl, index) => {
+        if (rpcUrl != '')
+            return rpcUrl;
+    });
+
+    const conList = rpcURLs.map((rpcUrl) => {
+        return new Connection(rpcUrl, {
+            commitment: 'confirmed',
+        });
+    });
+
     let walletTokenLists = walletAddresses.reduce((acc, addr) => {
         acc[addr] = { prevTokenList: [], curTokenList: []};
         return acc;
     }, {});
 
-
     while (true) {
         for (const walletAddr of walletAddresses) {
+            const connection = getRandomConnection(conList);
             const walletPublicKey = new PublicKey(walletAddr);
             const filter = { programId: TOKEN_PROGRAM_ID };
             const tokenAccounts = await connection.getTokenAccountsByOwner(walletPublicKey, filter);
