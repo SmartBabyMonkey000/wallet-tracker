@@ -89,13 +89,29 @@ async function monitorWallet() {
         return acc;
     }, {});
 
+    const filter = { programId: TOKEN_PROGRAM_ID };
+
     while (true) {
         try {
             for (const walletAddr of walletAddresses) {
                 const connection = getRandomConnection(conList);
                 const walletPublicKey = new PublicKey(walletAddr);
-                const filter = { programId: TOKEN_PROGRAM_ID };
-                const tokenAccounts = await connection.getTokenAccountsByOwner(walletPublicKey, filter);
+                
+                let tokenAccounts = null;
+                let retries = 0;
+                while ( tokenAccounts == null && retries < 3) {
+                    try {
+                        tokenAccounts = await connection.getTokenAccountsByOwner(walletPublicKey, filter);
+                        break;
+                    } catch (err) {
+                        await sleep(100 * Math.pow(2, retries));
+                    }
+                    retries++
+                }
+
+                if (tokenAccounts == null)
+                    continue;
+
                 const curSolBalance = await connection.getBalance(walletPublicKey) / LAMPORTS_PER_SOL;
                 const prevSolBalance = walletTokenLists[walletAddr].solBalance;
             
