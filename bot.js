@@ -19,6 +19,7 @@ let firstRunning = true;
 // Handle /start command
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
+  console.log('Bot is running....')
 
   if (!isMonitoring) {
     isMonitoring = true;

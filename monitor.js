@@ -145,7 +145,7 @@ async function monitorWallet() {
                     console.log(`New Token Detected for wallet ${walletAddr}:`, result[0]);
                     // Handle new token detection (e.g., notify user)
                     const tokenMint = new PublicKey(result[0]);
-                    const token = await getTokenMetaData(connection, tokenMint);
+                    let token = await getTokenMetaData(connection, tokenMint);
                     token.wallet = walletAddr;
                     console.log(token.name, token.symbol);
                     log_token_detection(token);
